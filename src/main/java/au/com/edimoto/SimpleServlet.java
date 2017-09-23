@@ -20,12 +20,14 @@ public class SimpleServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-
+        MongoClient mongo;
 
         String dbName = request.getParameter("db");
-        System.out.println(String.format("paramValue %s ", dbName));
-        MongoClient mongo;
+
         if (dbName != null && dbName.equalsIgnoreCase("openshift")) {
+
+            logDetails();
+
             MongoCredential credential = MongoCredential.createCredential(getMongoUser(), getDatabaseName(), getPassword());
             mongo = new MongoClient(new ServerAddress(getHostName(), 27017), Arrays.asList(credential));
         } else {
@@ -44,6 +46,10 @@ public class SimpleServlet extends HttpServlet {
         System.out.println(dbs); // [journaldev, local, admin]
 
         response.getWriter().println(String.format("Hello World!!! %s",db.getCollectionNames()));
+    }
+
+    private void logDetails() {
+        System.out.println(String.format("MONGODB_DB_HOST:%s MONGODB_USER:%s MONGODB_PASSWORD:%s MONGODB_DATABASE:%s", getHostName(), getMongoUser(), getPassword(), getDatabaseName()));
     }
 
     private String getHostName() {
