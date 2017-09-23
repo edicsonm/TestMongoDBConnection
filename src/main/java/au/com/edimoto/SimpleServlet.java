@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Set;
 
 public class SimpleServlet extends HttpServlet {
 
@@ -22,30 +22,40 @@ public class SimpleServlet extends HttpServlet {
 
         MongoClient mongo;
 
-        String dbName = request.getParameter("db");
-
-        if (dbName != null && dbName.equalsIgnoreCase("openshift")) {
-
-            logDetails();
-
-            MongoCredential credential = MongoCredential.createCredential(getMongoUser(), getDatabaseName(), getPassword());
-            mongo = new MongoClient(new ServerAddress(getHostName(), 27017), Arrays.asList(credential));
-        } else {
-            mongo = new MongoClient("localhost", 27017);
-        }
-
-        DB db = mongo.getDB("soypepo");
-        db.getCollectionNames().stream().forEach(collectionName -> {
-            System.out.println(String.format("Collection Name: %s ",collectionName));
-        });
+        String option = request.getParameter("option");
+        if (option != null) {
+            if (option.equalsIgnoreCase("openshift")) {
+                MongoCredential credential = MongoCredential.createCredential(getMongoUser(), getDatabaseName(), getPassword());
+                mongo = new MongoClient(new ServerAddress(getHostName(), 27017), Arrays.asList(credential));
+                DB db = mongo.getDB("soypepo");
+                response.getWriter().println(String.format("Hello World!!! %s ", listCollections(db)));
+            } else if (option.equalsIgnoreCase("details")) {
+                logDetails();
+            } else {
+                mongo = new MongoClient("localhost", 27017);
+                DB db = mongo.getDB("soypepo");
+                response.getWriter().println(String.format("Hello World!!! %s ", listCollections(db)));
+            }
 
 //        Set<String> collections = db.getCollectionNames();
 //        System.out.println(collections); // [datas, names, system.indexes, users]
 
-        List<String> dbs = mongo.getDatabaseNames();
-        System.out.println(dbs); // [journaldev, local, admin]
+//            List<String> dbs = mongo.getDatabaseNames();
+//            System.out.println(dbs); // [journaldev, local, admin]
 
-        response.getWriter().println(String.format("Hello World!!! %s",db.getCollectionNames()));
+
+        } else {
+            response.getWriter().println(String.format("Hello World!!! "));
+        }
+
+    }
+
+    private Set<String> listCollections(DB db) {
+        Set<String> collection = db.getCollectionNames();
+        db.getCollectionNames().stream().forEach(collectionName -> {
+            System.out.println(String.format("Collection Name: %s ", collectionName));
+        });
+        return collection;
     }
 
     private void logDetails() {
