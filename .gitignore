@@ -5,3 +5,4 @@
 .idea/inspectionProfiles/
 .idea/libraries/Maven__junit_junit_3_8_1.xml
 .idea/vcs.xml
+target/
