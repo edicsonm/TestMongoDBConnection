@@ -1,0 +1,7 @@
+# Created by .ignore support plugin (hsz.mobi)
+/TestMongoDBConnection.iml
+.gitignore
+.idea/artifacts/
+.idea/inspectionProfiles/
+.idea/libraries/Maven__junit_junit_3_8_1.xml
+.idea/vcs.xml
